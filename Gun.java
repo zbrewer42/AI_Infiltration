@@ -1,21 +1,18 @@
-package Game;
+package NewGame;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Gun extends Weapon {
 	ArrayList<Bullet> bList = new ArrayList<Bullet>();
 	int cooldown = 0;
-	int direction = 1; // 1 = north, 2 = south, 3 = east, 4 = west
-
+	int direction = 1; //1 = north, 2 = south, 3 = east, 4 = west
 	public Gun(int ex, int why, int wid, int hi) {
 		super(ex, why, wid, hi);
 		// TODO Auto-generated constructor stub
 		selected = false;
-		for (int i = 1; i <= 3; i++) {
-			bList.add(new Bullet(x, y));
-		}
+		
 	}
 
 	public void render(Graphics g) {
@@ -53,18 +50,18 @@ public class Gun extends Weapon {
 			fire();
 		}
 	}
-
+	
 	public void fire() {
-		if (Game.p.space) {
-			bList.add(0, new Bullet(x, y));
+		if(Game.p.space) {
+			bList.add(0, new Bullet(x,y, direction));
 			bList.get(0).tick();
-			if (bList.get(bList.size() - 1).hitE(Game.e)) {
-				Game.e.alive = false;
+			for(Enemy e : Game.eList) {
+			if(bList.get(bList.size()-1).hitE(e)) {
+				e.alive = false;}
 			}
-		} else {
-			bList.removeAll(bList);
 		}
-
+		else{bList.removeAll(bList);}
+			
 	}
-
+	
 }
