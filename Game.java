@@ -1,9 +1,9 @@
-package Game;
+package NewGame;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
+import javax.swing.JFrame;
 import java.awt.image.BufferStrategy;
+import java.util.*;
 
 public class Game extends Canvas implements Runnable {
 	/**
@@ -11,8 +11,8 @@ public class Game extends Canvas implements Runnable {
 	 */
 	static Player p = new Player();
 	static Block b = new Block();
-	// static Sword s = new Sword(p.x, p.y, 200, 200);
-	static Enemy e = new Enemy(100, 100, 30, 30);
+	//static Sword s = new Sword(p.x, p.y, 200, 200);
+	static ArrayList<Enemy> eList = new ArrayList<>();
 	private static final long serialVersionUID = 1L;
 	private static final int WIDTH = 720, HEIGHT = 480;
 	private Thread thread;
@@ -20,7 +20,7 @@ public class Game extends Canvas implements Runnable {
 
 	public Game() {
 		new Window(WIDTH, HEIGHT, "Game", this);
-		this.addKeyListener(new KeyInput(p));
+		this.addKeyListener(new KeyInput());
 	}
 
 	public static int getW() {
@@ -87,26 +87,55 @@ public class Game extends Canvas implements Runnable {
 		p.s.render(g);
 		p.g.render(g);
 		b.render(g);
-		e.render(g);
-		for (Bullet b : p.g.bList) {
+		for(Enemy e : eList) {
+			e.render(g);
+		}
+		for(Bullet b : p.g.bList) {
 			b.render(g);
 		}
 		g.dispose();
 
 		bs.show();
-
-		try {
-			Thread.sleep(2);
-		} catch (Exception e) {
-		}
+		tick();
+		try {Thread.sleep(2);} catch (Exception e) {}
 
 	}
 
 	public void tick() {
-
+		if(Math.random() < .001) spawnE();
+		if(p.health == 0) {
+			System.out.println("You Lose");
+			stop();}
 	}
-
+	
+	public void spawnE() {
+		int x = (int)(Math.random() * WIDTH)+1;
+		int y = (int)(Math.random() * HEIGHT)+1;
+		eList.add(new Enemy(x, y, 30, 30));
+	}
+	
 	public static void main(String args[]) {
 		new Game();
 	}
 }
+
+class Window extends Canvas {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public Window(int w, int h, String t, Game game) {
+		JFrame frame = new JFrame(t);
+		frame.setPreferredSize(new Dimension(w, h));
+		frame.setMinimumSize(new Dimension(w, h));
+		frame.setMaximumSize(new Dimension(w, h));
+
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(game);
+		frame.setVisible(true);
+		game.start();
+	}
+}
+
