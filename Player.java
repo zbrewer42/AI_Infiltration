@@ -1,11 +1,12 @@
-package Game;
+package NewGame;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Player extends GameObject {
+class Player extends GameObject {
+	int health = 5;
 	boolean north, south, east, west, space;
-	// ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+	//ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
 	String lastMove;
 	Sword s;
 	Gun g;
@@ -15,7 +16,7 @@ public class Player extends GameObject {
 		w = 20;
 		north = south = east = west = space = false;
 		lastMove = "north";
-		s = new Sword(x, y, 20, 20);
+		s = new Sword(x, y, 20, 30);
 		g = new Gun(x + w / 4, y - 5, 10, 10);
 	}
 
@@ -40,7 +41,7 @@ public class Player extends GameObject {
 		if (y < 0)
 			north = false;
 	}
-
+	
 	public void tick() {
 		if (this.collideN(Game.b))
 			north = false;
@@ -57,10 +58,12 @@ public class Player extends GameObject {
 		} else if (south) {
 			dy = 1;
 			lastMove = "south";
+			
 		} else
 			dy = 0;
 		if (east) {
 			dx = 1;
+			
 			lastMove = "east";
 		} else if (west) {
 			dx = -1;
@@ -70,6 +73,8 @@ public class Player extends GameObject {
 
 		x += dx;
 		y += dy;
+		
 	}
 
+	
 }
