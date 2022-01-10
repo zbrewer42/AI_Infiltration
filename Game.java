@@ -10,9 +10,15 @@ public class Game extends Canvas implements Runnable {
 	 * 
 	 */
 	static Player p = new Player();
-	static Block b = new Block();
+	static Block b = new Block(100, 100, 50, 50);
+	static Block b1 = new Block(-520, 100, 50, 50);
+	static ArrayList<Block> blocks = new ArrayList<>();
+	static ArrayList<Enemy> enemies = new ArrayList<>();
+	static Door d = new Door(0, 0, 100, 100);
+	static Enemy e = new Enemy(200, 200, 50, 50);
 	//static Sword s = new Sword(p.x, p.y, 200, 200);
-	static ArrayList<Enemy> eList = new ArrayList<>();
+	//static ArrayList<Enemy> eList = new ArrayList<>();
+	static ArrayList<GameObject> scrolling = new ArrayList<>();
 	private static final long serialVersionUID = 1L;
 	private static final int WIDTH = 720, HEIGHT = 480;
 	private Thread thread;
@@ -21,6 +27,17 @@ public class Game extends Canvas implements Runnable {
 	public Game() {
 		new Window(WIDTH, HEIGHT, "Game", this);
 		this.addKeyListener(new KeyInput());
+		blocks.add(b);
+		blocks.add(b1);
+		enemies.add(e);
+		for(Block b : blocks) {
+			scrolling.add(b);
+		}
+		for(Enemy e : enemies) {
+			scrolling.add(e);
+		}
+		scrolling.add(d);
+		
 	}
 
 	public static int getW() {
@@ -86,13 +103,28 @@ public class Game extends Canvas implements Runnable {
 		p.render(g);
 		p.s.render(g);
 		p.g.render(g);
-		b.render(g);
-		for(Enemy e : eList) {
-			e.render(g);
+		for(Block b : blocks) {
+			b.render(g);
 		}
+		d.render(g);
+		
+		for(Enemy e : enemies) {
+			e.render(g);
+			for(Bullet b : e.bList)
+				{b.render(g);}
+			}
+		
 		for(Bullet b : p.g.bList) {
 			b.render(g);
 		}
+		
+		
+		
+		
+		
+		
+		
+		
 		g.dispose();
 
 		bs.show();
@@ -102,17 +134,24 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void tick() {
-		if(Math.random() < .001) spawnE();
-		if(p.health == 0) {
+		//if(Math.random() < .003) //spawnE();
+		if(p.health <= 0) {
 			System.out.println("You Lose");
 			stop();}
+	
+		if(p.checkDoor()) {
+			for(GameObject g : scrolling) {
+				g.x+=720;
+			}
+		}
+	
 	}
 	
-	public void spawnE() {
-		int x = (int)(Math.random() * WIDTH)+1;
-		int y = (int)(Math.random() * HEIGHT)+1;
-		eList.add(new Enemy(x, y, 30, 30));
-	}
+	//public void spawnE() {
+		//int x = (int)(Math.random() * WIDTH)+1;
+		//int y = (int)(Math.random() * HEIGHT)+1;
+		//eList.add(new Enemy(x, y, 30, 30));
+	//}
 	
 	public static void main(String args[]) {
 		new Game();
