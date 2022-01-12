@@ -1,116 +1,118 @@
-package NewGame;
-
-import java.awt.*;
-import java.awt.Graphics;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.util.LinkedList;
 
 public class Enemy extends GameObject {
 	int type;
 	boolean alive;
-	ArrayList <Bullet> bList;
+	LinkedList<Bullet> bList;
 	Bullet bull;
 	int cooldown;
 	int d = 0;
-	public Enemy(int ex, int why, int wid, int hi) {
-		super(ex, why, wid, hi);
+	Game game;
+	float xv, yv;
+
+	public Enemy(int x, int y, int w, int h, Game g) {
+		super(x, y, w, h);
 		type = 1;
 		alive = true;
-		bList = new ArrayList<Bullet>();
-		cooldown = 0; 
-		bull = new Bullet(x, y);
-		
+		bList = new LinkedList<Bullet>();
+		cooldown = 0;
+		bull = new Bullet(x, y, 0, 0);
+		game = g;
+		xv = yv = 0;
 	}
-	public Enemy(int ex, int why, int wid, int hi, int t) {
-		super(ex, why, wid, hi);
+
+	public Enemy(int x, int y, int w, int h, int t, Game g) {
+		super(x, y, w, h);
 		type = t;
 		alive = true;
-		
+		game = g;
+		xv = yv = 0;
 	}
-	public void render(Graphics g) {
-		if(alive) {
+
+	public void render(Graphics2D g) {
+		if (alive) {
 			g.setColor(Color.BLUE);
-			g.fillOval(x, y, w, h);
-			if(x > 0 && x < Game.getW() && y > 0 && y < Game.getH())
-			tick();
-			
+			g.fill(hitbox);
+			for (Bullet b : bList) {
+				b.render(g);
+			}
+			if (hitbox.intersects(Game.borders))
+				tick();
+
+			g.draw(new Line2D.Double(hitbox.getCenterX(), hitbox.getCenterY(), hitbox.getCenterX() + xv * 20,
+					hitbox.getCenterY() + yv * 20));
 		}
 		damage();
-		
-		
-	}
-	public void damage() {
-		
-		if(Game.p.s.hitE(this)) {alive = false;}
-		if(this.collide(Game.p)) {
-			Game.p.damage(1);
-			if(Game.p.x < x) {
-				Game.p.x-=5;}
-			else {Game.p.x+= 5;}
-			if(Game.p.y < y) {
-				Game.p.y-=5;}
-			else {Game.p.y+= 5;}
-		}
-		if(!alive) {x = y = 2000000;}
-	}
-	
-	public void attack() {
-		if(cooldown == 0) {
-			bList.add(0, new Bullet(x,y));
-			bList.get(0).dir = findDir();
-			bList.get(0).tick();
-			if((bList.get(0).x < 0) || (bList.get(0).y > Game.getW()) || (bList.get(0).y < 0) || (bList.get(0).y > Game.getH())) {
-				bList.remove(0);
-			}
-		cooldown = 250;	
-		}
-		else cooldown--;
-		for(Bullet b : bList) {
-			if(b.touches(Game.p)) {
-				Game.p.health -= 10;
-			}
-		}
-	}
-	
-	
-	public void move() {
-	int m = (int)(Math.random() *10);
-	if(m == 1) {x +=3;}
-	else if(m == 2) {x -= 3;}
-	else if(m == 3) {y += 3;}
-	else if (m == 4) {y -= 3;}
-	
-	}
-	
-	public int findDir() {
-		int x = findX(Game.p);
-		int y = findY(Game.p);
-		
-		if (Math.abs(x) > Math.abs(y)) {
-			if(x < 0)return 3;
-			return 4;
-		}
-		if (Math.abs(x) < Math.abs(y)) {
-			if(y < 0) return 2;
-			return 1;
-		}
-		return 0;
-	}
-	
-	public int findX(Player p) {
-		return x - p.x;
-	}
-	public int findY(Player p) {
-		return y - p.y;
-	}
-	
-	public void tick() {
-		//int[] slope = findSlope();
-		//x += slope[2];
-		//y+= slope[2];
-		attack();
-		//move();
-		
-	}
-	
 
+	}
+
+	public void damage() {
+
+//		if (game.p.s.hitE(this)) {
+//			alive = false;
+//		}
+		if (this.hitbox.intersects(game.p.hitbox)) {
+			game.p.damage(1);
+			if (game.p.hitbox.getCenterX() < hitbox.getCenterX()) {
+				game.p.trigMove(-5, 0);
+			} else {
+				game.p.trigMove(5, 0);
+			}
+			if (game.p.hitbox.getCenterY() < hitbox.getCenterY()) {
+				game.p.trigMove(0, -5);
+			} else {
+				game.p.trigMove(0, 5);
+			}
+		}
+		if (!alive) {
+			hitbox = new Rectangle2D.Float((float) hitbox.getWidth(), (float) hitbox.getHeight(), Integer.MAX_VALUE,
+					Integer.MAX_VALUE);
+		}
+	}
+
+	public void attack() {
+		if (cooldown == 0) {
+			game.bullets.add(new Bullet((int) hitbox.getCenterX(), (int) hitbox.getCenterY(), xv, yv, angle));
+			cooldown = 2;
+		} else
+			cooldown--;
+	}
+
+	public void move() {
+		yv = (float) (0.25 * Math.sin(angle));
+		xv = (float) (0.25 * Math.cos(angle));
+		hitbox = new Rectangle2D.Float((float) hitbox.getX() + xv, (float) hitbox.getY() + yv,
+				(float) hitbox.getWidth(), (float) hitbox.getHeight());
+	}
+
+	public void aimAtPlayer() {
+		angle = Math.atan2(game.p.hitbox.getCenterY() - hitbox.getCenterY(),
+				game.p.hitbox.getCenterX() - hitbox.getCenterX());
+	}
+
+//	public int findX(Player p) {
+//		return x - p.x;
+//	}
+//
+//	public int findY(Player p) {
+//		return y - p.y;
+//	}
+
+	public void tick() {
+		System.out.println(Math.toDegrees(angle));
+		aimAtPlayer();
+		move();
+		attack();
+	}
+
+	public void scroll(float mx, float my) {
+		super.scroll(mx, my);
+		for (Bullet b : bList)
+			b.hitbox.setRect(b.hitbox.getMinX() + mx, b.hitbox.getMinY() + my, b.hitbox.getWidth(),
+					b.hitbox.getHeight());
+	}
 }
