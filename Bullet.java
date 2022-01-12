@@ -1,54 +1,43 @@
-package NewGame;
-import java.awt.*;
-public class Bullet extends Weapon{
-	int dir = 0; //1 is up, 2 is down, 3 is right, 4 is left
-	public Bullet(int ex, int why, int d) {
-		super(ex, why, 5, 5);
-		dir = d;
-		dx = 2;
-		
-		
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Bullet extends Weapon {
+	float xv, yv;
+	float speed = 3;
+
+	public Bullet(int x, int y, float xv, float yv, double a) {
+		super(x, y, 5, 5);
+		this.yv = yv * speed;
+		this.xv = xv * speed;
+		angle = a;
 	}
-	public Bullet(int ex, int why) {
-		super(ex, why, 10, 10);
-		dx= 2;
-		dir = 0;
+
+	public Bullet(int x, int y, float xv, float yv) {
+		super(x, y, 10, 10);
+		this.yv = yv * speed;
+		this.xv = xv * speed;
+		angle = 0;
 	}
-	public void reset(int ex, int why) {x = ex; y = why;}
-	public void render(Graphics g) {
-		
+
+	public void reset(int x, int y) {
+		hitbox.setRect(x, y, hitbox.getWidth(), hitbox.getHeight());
+	}
+
+	public void render(Graphics2D g) {
 		g.setColor(Color.WHITE);
-		g.fillOval(x, y, w, h);
+		g.fill(hitbox);
 		tick();
 	}
+
 	public void tick() {
-		if(dir == 1)
-			y -= 2;
-		if(dir == 2)
-			y += 2;	
-		if(dir == 3)
-			x += 2;
-		if(dir == 4)
-			x -= 2;
-		//else {x += dx; y+= dy;}	
+		hitbox = new Rectangle2D.Float((float) hitbox.getX() + xv, (float) hitbox.getY() + yv,
+				(float) hitbox.getWidth(), (float) hitbox.getHeight());
 	}
-	
+
 	public boolean touches(Player p) {
-		//right border
-		if(x+w == p.x && y > p.y && y < p.y+p.h)
-			return true;
-		//left border
-		else if(x == p.x+w && y > p.y && y < p.y+p.h) 
-			return true;
-		//top border
-		else if(y == p.y+p.h && x > p.x && x < p.x+w)
-			return true;
-		//bottom border
-		else if(y+h == p.y && x > p.x && x < p.x+w)
-			return true;
-		return false;
-		
+		p.health -= 10;
+		return hitbox.intersects(p.hitbox);
 	}
-	
-	
-	}
+
+}
