@@ -148,6 +148,8 @@ public class Game extends Canvas implements Runnable {
 			Bullet b = it.next();
 			if (b.hitbox.intersects(p.hitbox) || !b.hitbox.intersects(borders)) {
 				it.remove();
+			} else {
+
 			}
 		}
 
@@ -160,6 +162,8 @@ public class Game extends Canvas implements Runnable {
 			float move = (float) (topBorder - p.hitbox.getY());
 			p.scroll(0, move);
 			e.scroll(0, move);
+			for (Bullet b : bullets)
+				b.scroll(0, move);
 			for (Solid s : solids)
 				s.scroll(0, move);
 		}
@@ -168,6 +172,8 @@ public class Game extends Canvas implements Runnable {
 			float move = (float) (bottomBorder - p.hitbox.getY());
 			p.scroll(0, move);
 			e.scroll(0, move);
+			for (Bullet b : bullets)
+				b.scroll(0, move);
 			for (Solid s : solids)
 				s.scroll(0, move);
 		}
@@ -176,6 +182,8 @@ public class Game extends Canvas implements Runnable {
 			float move = (float) (leftBorder - p.hitbox.getX());
 			p.scroll(move, 0);
 			e.scroll(move, 0);
+			for (Bullet b : bullets)
+				b.scroll(move, 0);
 			for (Solid s : solids)
 				s.scroll(move, 0);
 		}
@@ -184,6 +192,8 @@ public class Game extends Canvas implements Runnable {
 			float move = (float) (rightBorder - p.hitbox.getX());
 			p.scroll(move, 0);
 			e.scroll(move, 0);
+			for (Bullet b : bullets)
+				b.scroll(move, 0);
 			for (Solid s : solids)
 				s.scroll(move, 0);
 		}
