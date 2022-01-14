@@ -1,19 +1,16 @@
-package Game;
 
 public class Weapon extends GameObject {
 	boolean selected;
 
-	public Weapon(int ex, int why, int wid, int hi) {
-		super(ex, why, wid, hi);
-		// TODO Auto-generated constructor stub
+	public Weapon(int x, int y, int w, int h) {
+		super(x, y, w, h);
 		selected = false;
 	}
 
 	public boolean hitE(Enemy e) {
-		if (this.collide(e)) {
+		if (this.hitbox.intersects(e.hitbox)) {
 			return true;
 		}
 		return false;
 	}
-
 }

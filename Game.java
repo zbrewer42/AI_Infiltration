@@ -1,54 +1,78 @@
-package NewGame;
-
-import java.awt.*;
-import javax.swing.JFrame;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable {
 	/**
 	 * 
 	 */
-	static Player p = new Player();
-	static Block b = new Block(100, 100, 50, 50);
-	static Block b1 = new Block(-520, 100, 50, 50);
-	static ArrayList<Block> blocks = new ArrayList<>();
-	static ArrayList<Enemy> enemies = new ArrayList<>();
-	static Door d = new Door(0, 0, 100, 100);
-	static Enemy e = new Enemy(200, 200, 50, 50);
-	//static Sword s = new Sword(p.x, p.y, 200, 200);
-	//static ArrayList<Enemy> eList = new ArrayList<>();
-	static ArrayList<GameObject> scrolling = new ArrayList<>();
+	Player p;
+	Enemy e;
+	ArrayList<Solid> solids = new ArrayList<Solid>();
+	LinkedList<Bullet> bullets = new LinkedList<Bullet>();
+
 	private static final long serialVersionUID = 1L;
-	private static final int WIDTH = 720, HEIGHT = 480;
+	// resolution goal is 240x160, temp is 720x480
+	static final Rectangle2D borders = new Rectangle2D.Float(0, 0, 720, 480);
 	private Thread thread;
 	private boolean running = false;
 
 	public Game() {
-		new Window(WIDTH, HEIGHT, "Game", this);
-		this.addKeyListener(new KeyInput());
-		blocks.add(b);
-		blocks.add(b1);
-		enemies.add(e);
-		for(Block b : blocks) {
-			scrolling.add(b);
-		}
-		for(Enemy e : enemies) {
-			scrolling.add(e);
-		}
-		scrolling.add(d);
-		
+		new Window(getW() + 16, getH() + 39, "Game", this);
+		p = new Player(this);
+		e = new Enemy(200, 200, 10, 10, this);
+
+		this.addKeyListener(new KeyInput(p));
 	}
 
 	public static int getW() {
-		return WIDTH;
+		return (int) borders.getMaxX();
 	}
 
 	public static int getH() {
-		return HEIGHT;
+		return (int) borders.getMaxY();
 	}
 
 	public synchronized void start() {
+		ArrayList<Point2D> tempPoints = new ArrayList<Point2D>();
+		tempPoints.add(new Point2D.Float(50, 50));
+		tempPoints.add(new Point2D.Float(50, 100));
+		tempPoints.add(new Point2D.Float(100, 100));
+		tempPoints.add(new Point2D.Float(100, 50));
+		solids.add(new Solid(tempPoints));
+
+		tempPoints = new ArrayList<Point2D>();
+		tempPoints.add(new Point2D.Float(150, 150));
+		tempPoints.add(new Point2D.Float(150, 200));
+		tempPoints.add(new Point2D.Float(200, 200));
+		tempPoints.add(new Point2D.Float(200, 150));
+		solids.add(new Solid(tempPoints));
+
+		tempPoints = new ArrayList<Point2D>();
+		tempPoints.add(new Point2D.Float(100, 100));
+		tempPoints.add(new Point2D.Float(150, 150));
+		solids.add(new Solid(tempPoints));
+
+		tempPoints = new ArrayList<Point2D>();
+		tempPoints.add(new Point2D.Float(300, 250));
+		tempPoints.add(new Point2D.Float(200, 200));
+		solids.add(new Solid(tempPoints));
+
+		tempPoints = new ArrayList<Point2D>();
+		tempPoints.add(new Point2D.Float(300, 250));
+		tempPoints.add(new Point2D.Float(400, 500));
+		solids.add(new Solid(tempPoints));
+
 		thread = new Thread(this);
 		thread.start();
 		running = true;
@@ -98,61 +122,83 @@ public class Game extends Canvas implements Runnable {
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
-		p.render(g);
-		p.s.render(g);
-		p.g.render(g);
-		for(Block b : blocks) {
-			b.render(g);
-		}
-		d.render(g);
-		
-		for(Enemy e : enemies) {
-			e.render(g);
-			for(Bullet b : e.bList)
-				{b.render(g);}
-			}
-		
-		for(Bullet b : p.g.bList) {
-			b.render(g);
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		g.dispose();
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(Color.BLACK);
+		g2d.fill(borders);
+		p.render(g2d);
+		e.render(g2d);
+		for (Bullet b : bullets)
+			b.render(g2d);
+		for (Solid s : solids)
+			s.render(g2d);
+		g2d.dispose();
 
 		bs.show();
 		tick();
-		try {Thread.sleep(2);} catch (Exception e) {}
+		try {
+			Thread.sleep(2);
+		} catch (Exception e) {
+		}
 
 	}
 
 	public void tick() {
-		//if(Math.random() < .003) //spawnE();
-		if(p.health <= 0) {
-			System.out.println("You Lose");
-			stop();}
-	
-		if(p.checkDoor()) {
-			for(GameObject g : scrolling) {
-				g.x+=720;
+		Iterator<Bullet> it = bullets.iterator();
+		while (it.hasNext()) {
+			Bullet b = it.next();
+			if (b.hitbox.intersects(p.hitbox) || !b.hitbox.intersects(borders)) {
+				it.remove();
+			} else {
+
 			}
 		}
-	
+
+		scroll();
 	}
-	
-	//public void spawnE() {
-		//int x = (int)(Math.random() * WIDTH)+1;
-		//int y = (int)(Math.random() * HEIGHT)+1;
-		//eList.add(new Enemy(x, y, 30, 30));
-	//}
-	
+
+	public void scroll() {
+		float topBorder = 240, bottomBorder = 240, leftBorder = 360, rightBorder = 360;
+		if (p.hitbox.getCenterY() < topBorder) {
+			float move = (float) (topBorder - p.hitbox.getY());
+			p.scroll(0, move);
+			e.scroll(0, move);
+			for (Bullet b : bullets)
+				b.scroll(0, move);
+			for (Solid s : solids)
+				s.scroll(0, move);
+		}
+
+		if (p.hitbox.getCenterY() > bottomBorder) {
+			float move = (float) (bottomBorder - p.hitbox.getY());
+			p.scroll(0, move);
+			e.scroll(0, move);
+			for (Bullet b : bullets)
+				b.scroll(0, move);
+			for (Solid s : solids)
+				s.scroll(0, move);
+		}
+
+		if (p.hitbox.getCenterX() < leftBorder) {
+			float move = (float) (leftBorder - p.hitbox.getX());
+			p.scroll(move, 0);
+			e.scroll(move, 0);
+			for (Bullet b : bullets)
+				b.scroll(move, 0);
+			for (Solid s : solids)
+				s.scroll(move, 0);
+		}
+
+		if (p.hitbox.getCenterX() > rightBorder) {
+			float move = (float) (rightBorder - p.hitbox.getX());
+			p.scroll(move, 0);
+			e.scroll(move, 0);
+			for (Bullet b : bullets)
+				b.scroll(move, 0);
+			for (Solid s : solids)
+				s.scroll(move, 0);
+		}
+	}
+
 	public static void main(String args[]) {
 		new Game();
 	}
@@ -170,11 +216,10 @@ class Window extends Canvas {
 		frame.setMinimumSize(new Dimension(w, h));
 		frame.setMaximumSize(new Dimension(w, h));
 
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(game);
 		frame.setVisible(true);
 		game.start();
 	}
 }
-
