@@ -1,70 +1,58 @@
-package NewGame;
+package game;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class Sword extends Weapon {
 	int cooldown;
-	public Sword(int ex, int why, int wid, int hi) {
-		super(ex, why, wid, hi);
+	Player player;
+
+	public Sword(int x, int y, int w, int h, Player p) {
+		super(x, y, w, h);
 		selected = true;
-		// TODO Auto-generated constructor stub
+		player = p;
 	}
-	public void render(Graphics g) {
-		if(Game.p.space && selected) {
+
+	public void render(Graphics2D g) {
+		if (player.space && selected) {
 			g.setColor(Color.CYAN);
-		g.fillRect(x, y, w, h);}
+			g.draw(hitbox);
+		}
 		tick();
-		
+
 	}
+
 	public void tick() {
-		if(selected) {
-		if(Game.p.lastMove.equals("north")) {
-			if(Game.p.space) {
-			x = Game.p.x;
-			y = Game.p.y-h;
-			rotateV();
-			}
+		if (selected && player.space) {
+			if (Math.toDegrees(player.angle) >= -90 - 45 && Math.toDegrees(player.angle) <= -90 + 45)
+				System.out.print("up");
+			if (Math.toDegrees(player.angle) >= 0 - 45 && Math.toDegrees(player.angle) <= 0 + 45)
+				System.out.print("right");
+			if (Math.toDegrees(player.angle) >= 90 - 45 && Math.toDegrees(player.angle) <= 90 + 45)
+				System.out.print("down");
+			if (Math.toDegrees(player.angle) >= 180 - 45 || Math.toDegrees(player.angle) <= -180 + 45)
+				System.out.print("left");
+			System.out.println();
 		}
-		else if(Game.p.lastMove.equals("south")) {
-			if(Game.p.space) {
-				x = Game.p.x;
-				y = Game.p.y+Game.p.h;
-				rotateV();
-			}
-		}
-		else if(Game.p.lastMove.equals("east")) {
-			if(Game.p.space) {
-				x = Game.p.x+Game.p.w;
-				y = Game.p.y;
-				rotateH();
-			}
-		}
-		else if(Game.p.lastMove.equals("west")) {
-			if(Game.p.space) {
-				x = Game.p.x - w;
-				y = Game.p.y;
-				rotateH();
-			}	
-		}
-		else {x = y = 20000;}
-		}
-			
+
 	}
-	
-	public void rotateH(){
-		if(w < h) {
-		int temp = w;
-		w = h;
-		h = temp;}
-		
-	}
-	public void rotateV(){
-		if(w > h) {
-		int temp = w;
-		w = h;
-		h = temp;}
-		
-	}
+
+//	public void rotateH() {
+//		if (w < h) {
+//			int temp = w;
+//			w = h;
+//			h = temp;
+//		}
+//
+//	}
+//
+//	public void rotateV() {
+//		if (w > h) {
+//			int temp = w;
+//			w = h;
+//			h = temp;
+//		}
+//
+//	}
 
 }
