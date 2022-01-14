@@ -1,10 +1,12 @@
+package game;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 public class Bullet extends Weapon {
 	float xv, yv;
-	float speed = 3;
+	float speed = 5;
 
 	public Bullet(int x, int y, float xv, float yv, double a) {
 		super(x, y, 5, 5);
@@ -39,5 +41,4 @@ public class Bullet extends Weapon {
 		p.health -= 10;
 		return hitbox.intersects(p.hitbox);
 	}
-
 }
