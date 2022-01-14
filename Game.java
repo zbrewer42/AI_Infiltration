@@ -1,3 +1,5 @@
+package game;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,10 +8,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable {
@@ -18,6 +22,7 @@ public class Game extends Canvas implements Runnable {
 	 */
 	Player p;
 	Enemy e;
+	Background bg;
 	ArrayList<Solid> solids = new ArrayList<Solid>();
 	LinkedList<Bullet> bullets = new LinkedList<Bullet>();
 
@@ -28,10 +33,15 @@ public class Game extends Canvas implements Runnable {
 	private boolean running = false;
 
 	public Game() {
-		new Window(getW() + 16, getH() + 39, "Game", this);
-		p = new Player(this);
-		e = new Enemy(200, 200, 10, 10, this);
+		p = new Player(359, 1568, 11, 11, this);
+		e = new Enemy(300, 300, 11, 11, this);
+		try {
+			bg = new Background(ImageIO.read(getClass().getResource("/game/backgrounds/Tutorial.png")));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
+		new Window(getW() + 16, getH() + 39, "Game", this);
 		this.addKeyListener(new KeyInput(p));
 	}
 
@@ -45,32 +55,68 @@ public class Game extends Canvas implements Runnable {
 
 	public synchronized void start() {
 		ArrayList<Point2D> tempPoints = new ArrayList<Point2D>();
-		tempPoints.add(new Point2D.Float(50, 50));
-		tempPoints.add(new Point2D.Float(50, 100));
-		tempPoints.add(new Point2D.Float(100, 100));
-		tempPoints.add(new Point2D.Float(100, 50));
+		tempPoints.add(new Point2D.Float(302, 36));
+		tempPoints.add(new Point2D.Float(417, 36));
+		tempPoints.add(new Point2D.Float(453, 72));
+		tempPoints.add(new Point2D.Float(453, 224));
+		tempPoints.add(new Point2D.Float(648, 419));
+		tempPoints.add(new Point2D.Float(648, 540));
+		tempPoints.add(new Point2D.Float(408, 780));
+		tempPoints.add(new Point2D.Float(408, 834));
+		tempPoints.add(new Point2D.Float(445, 871));
+		tempPoints.add(new Point2D.Float(610, 871));
+		tempPoints.add(new Point2D.Float(648, 909));
+		tempPoints.add(new Point2D.Float(648, 1170));
+		tempPoints.add(new Point2D.Float(610, 1208));
+		tempPoints.add(new Point2D.Float(445, 1208));
+		tempPoints.add(new Point2D.Float(408, 1245));
+		tempPoints.add(new Point2D.Float(408, 1447));
+		tempPoints.add(new Point2D.Float(379, 1476));
+		tempPoints.add(new Point2D.Float(379, 1539));
+		tempPoints.add(new Point2D.Float(373, 1545));
+		tempPoints.add(new Point2D.Float(373, 1549));
+		tempPoints.add(new Point2D.Float(381, 1557));
+		tempPoints.add(new Point2D.Float(381, 1579));
+		tempPoints.add(new Point2D.Float(372, 1588));
+		tempPoints.add(new Point2D.Float(347, 1588));
+		tempPoints.add(new Point2D.Float(338, 1579));
+		tempPoints.add(new Point2D.Float(338, 1557));
+		tempPoints.add(new Point2D.Float(346, 1549));
+		tempPoints.add(new Point2D.Float(346, 1545));
+		tempPoints.add(new Point2D.Float(340, 1539));
+		tempPoints.add(new Point2D.Float(340, 1476));
+		tempPoints.add(new Point2D.Float(311, 1447));
+		tempPoints.add(new Point2D.Float(311, 1245));
+		tempPoints.add(new Point2D.Float(274, 1208));
+		tempPoints.add(new Point2D.Float(109, 1208));
+		tempPoints.add(new Point2D.Float(71, 1170));
+		tempPoints.add(new Point2D.Float(71, 909));
+		tempPoints.add(new Point2D.Float(109, 871));
+		tempPoints.add(new Point2D.Float(274, 871));
+		tempPoints.add(new Point2D.Float(311, 834));
+		tempPoints.add(new Point2D.Float(311, 780));
+		tempPoints.add(new Point2D.Float(71, 540));
+		tempPoints.add(new Point2D.Float(71, 419));
+		tempPoints.add(new Point2D.Float(266, 224));
+		tempPoints.add(new Point2D.Float(266, 72));
 		solids.add(new Solid(tempPoints));
 
 		tempPoints = new ArrayList<Point2D>();
-		tempPoints.add(new Point2D.Float(150, 150));
-		tempPoints.add(new Point2D.Float(150, 200));
-		tempPoints.add(new Point2D.Float(200, 200));
-		tempPoints.add(new Point2D.Float(200, 150));
+		tempPoints.add(new Point2D.Float(279, 959));
+		tempPoints.add(new Point2D.Float(440, 959));
+		tempPoints.add(new Point2D.Float(440, 1120));
+		tempPoints.add(new Point2D.Float(279, 1120));
 		solids.add(new Solid(tempPoints));
 
 		tempPoints = new ArrayList<Point2D>();
-		tempPoints.add(new Point2D.Float(100, 100));
-		tempPoints.add(new Point2D.Float(150, 150));
-		solids.add(new Solid(tempPoints));
-
-		tempPoints = new ArrayList<Point2D>();
-		tempPoints.add(new Point2D.Float(300, 250));
-		tempPoints.add(new Point2D.Float(200, 200));
-		solids.add(new Solid(tempPoints));
-
-		tempPoints = new ArrayList<Point2D>();
-		tempPoints.add(new Point2D.Float(300, 250));
-		tempPoints.add(new Point2D.Float(400, 500));
+		tempPoints.add(new Point2D.Float(359, 269));
+		tempPoints.add(new Point2D.Float(360, 269));
+		tempPoints.add(new Point2D.Float(551, 460));
+		tempPoints.add(new Point2D.Float(551, 499));
+		tempPoints.add(new Point2D.Float(360, 690));
+		tempPoints.add(new Point2D.Float(359, 690));
+		tempPoints.add(new Point2D.Float(168, 499));
+		tempPoints.add(new Point2D.Float(168, 460));
 		solids.add(new Solid(tempPoints));
 
 		thread = new Thread(this);
@@ -125,12 +171,15 @@ public class Game extends Canvas implements Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.BLACK);
 		g2d.fill(borders);
+		if (bg != null && !p.space)
+			bg.render(g2d);
 		p.render(g2d);
 		e.render(g2d);
 		for (Bullet b : bullets)
 			b.render(g2d);
-		for (Solid s : solids)
-			s.render(g2d);
+		if (p.space)
+			for (Solid s : solids)
+				s.render(g2d);
 		g2d.dispose();
 
 		bs.show();
@@ -146,10 +195,12 @@ public class Game extends Canvas implements Runnable {
 		Iterator<Bullet> it = bullets.iterator();
 		while (it.hasNext()) {
 			Bullet b = it.next();
-			if (b.hitbox.intersects(p.hitbox) || !b.hitbox.intersects(borders)) {
+			if (b.hitbox.intersects(p.hitbox)) {
 				it.remove();
-			} else {
-
+				p.damage(1);
+				System.out.println(p.health);
+			} else if (!b.hitbox.intersects(borders) || b.collide(solids).size() > 0) {
+				it.remove();
 			}
 		}
 
@@ -157,46 +208,26 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void scroll() {
-		float topBorder = 240, bottomBorder = 240, leftBorder = 360, rightBorder = 360;
+		float topBorder = 240, bottomBorder = 240, leftBorder = 360, rightBorder = 360, movex = 0, movey = 0;
 		if (p.hitbox.getCenterY() < topBorder) {
-			float move = (float) (topBorder - p.hitbox.getY());
-			p.scroll(0, move);
-			e.scroll(0, move);
-			for (Bullet b : bullets)
-				b.scroll(0, move);
-			for (Solid s : solids)
-				s.scroll(0, move);
-		}
-
-		if (p.hitbox.getCenterY() > bottomBorder) {
-			float move = (float) (bottomBorder - p.hitbox.getY());
-			p.scroll(0, move);
-			e.scroll(0, move);
-			for (Bullet b : bullets)
-				b.scroll(0, move);
-			for (Solid s : solids)
-				s.scroll(0, move);
+			movey = (float) (topBorder - p.hitbox.getY());
+		} else if (p.hitbox.getCenterY() > bottomBorder) {
+			movey = (float) (bottomBorder - p.hitbox.getY());
 		}
 
 		if (p.hitbox.getCenterX() < leftBorder) {
-			float move = (float) (leftBorder - p.hitbox.getX());
-			p.scroll(move, 0);
-			e.scroll(move, 0);
-			for (Bullet b : bullets)
-				b.scroll(move, 0);
-			for (Solid s : solids)
-				s.scroll(move, 0);
+			movex = (float) (leftBorder - p.hitbox.getX());
+		} else if (p.hitbox.getCenterX() > rightBorder) {
+			movex = (float) (rightBorder - p.hitbox.getX());
 		}
 
-		if (p.hitbox.getCenterX() > rightBorder) {
-			float move = (float) (rightBorder - p.hitbox.getX());
-			p.scroll(move, 0);
-			e.scroll(move, 0);
-			for (Bullet b : bullets)
-				b.scroll(move, 0);
-			for (Solid s : solids)
-				s.scroll(move, 0);
-		}
+		bg.scroll(movex, movey);
+		p.scroll(movex, movey);
+		e.scroll(movex, movey);
+		for (Bullet b : bullets)
+			b.scroll(movex, movey);
+		for (Solid s : solids)
+			s.scroll(movex, movey);
 	}
 
 	public static void main(String args[]) {
