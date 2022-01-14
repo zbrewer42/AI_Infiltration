@@ -1,3 +1,5 @@
+package game;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -24,6 +26,9 @@ public class KeyInput extends KeyAdapter {
 		if (key == KeyEvent.VK_LEFT) {
 			player.left = true;
 		}
+		if (key == KeyEvent.VK_SPACE) {
+			player.space = true;
+		}
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -36,5 +41,7 @@ public class KeyInput extends KeyAdapter {
 			player.right = false;
 		if (key == KeyEvent.VK_LEFT)
 			player.left = false;
+		if (key == KeyEvent.VK_SPACE)
+			player.space = false;
 	}
 }
