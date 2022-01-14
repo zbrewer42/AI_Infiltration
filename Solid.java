@@ -1,3 +1,6 @@
+package game;
+
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
@@ -25,12 +28,13 @@ public class Solid extends Polygon {
 	}
 
 	static Point2D normal(Line2D line) {
-		double angle = Math.atan(Math.abs(line.getY2() - line.getY1()) / Math.abs(line.getX2() - line.getX1()));
+		double angle = Math.atan2(line.getY2() - line.getY1(), line.getX2() - line.getX1());
 		Point2D normal = new Point2D.Float((float) Math.sin(angle), (float) -Math.cos(angle));
 		return normal;
 	}
 
 	public void render(Graphics2D g) {
+		g.setColor(Color.WHITE);
 		for (Line2D.Float l : lines) {
 			g.draw(l);
 		}
