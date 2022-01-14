@@ -1,35 +1,33 @@
+package game;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
-public class Enemy extends GameObject {
+public class Enemy extends Character {
 	int type;
 	boolean alive;
 	LinkedList<Bullet> bList;
 	Bullet bull;
-	int cooldown;
 	int d = 0;
-	Game game;
 	float xv, yv;
 
 	public Enemy(int x, int y, int w, int h, Game g) {
-		super(x, y, w, h);
+		super(x, y, w, h, g);
 		type = 1;
 		alive = true;
 		bList = new LinkedList<Bullet>();
 		cooldown = 0;
 		bull = new Bullet(x, y, 0, 0);
-		game = g;
 		xv = yv = 0;
 	}
 
 	public Enemy(int x, int y, int w, int h, int t, Game g) {
-		super(x, y, w, h);
+		super(x, y, w, h, g);
 		type = t;
 		alive = true;
-		game = g;
 		xv = yv = 0;
 	}
 
@@ -77,35 +75,28 @@ public class Enemy extends GameObject {
 	public void attack() {
 		if (cooldown == 0) {
 			game.bullets.add(new Bullet((int) hitbox.getCenterX(), (int) hitbox.getCenterY(), xv, yv, angle));
-			cooldown = 2;
+			cooldown = 250;
 		} else
 			cooldown--;
 	}
 
-	public void move() {
+	public void trigMove() {
 		yv = (float) (0.25 * Math.sin(angle));
 		xv = (float) (0.25 * Math.cos(angle));
-		hitbox = new Rectangle2D.Float((float) hitbox.getX() + xv, (float) hitbox.getY() + yv,
-				(float) hitbox.getWidth(), (float) hitbox.getHeight());
-	}
-
-	public void aimAtPlayer() {
-		angle = Math.atan2(game.p.hitbox.getCenterY() - hitbox.getCenterY(),
-				game.p.hitbox.getCenterX() - hitbox.getCenterX());
+		super.trigMove(xv, yv);
 	}
 
 //	public int findX(Player p) {
 //		return x - p.x;
 //	}
-//
+
 //	public int findY(Player p) {
 //		return y - p.y;
 //	}
 
 	public void tick() {
-		System.out.println(Math.toDegrees(angle));
-		aimAtPlayer();
-		move();
+		aimAt(game.p);
+		trigMove();
 		attack();
 	}
 
