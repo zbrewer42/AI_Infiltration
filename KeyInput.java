@@ -3,6 +3,8 @@ package game;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import game.Character.weapon;
+
 public class KeyInput extends KeyAdapter {
 	Player player;
 
@@ -14,21 +16,22 @@ public class KeyInput extends KeyAdapter {
 		int key = e.getKeyCode();
 		// System.out.println();
 
-		if (key == KeyEvent.VK_UP) {
+		if (key == KeyEvent.VK_UP)
 			player.up = true;
-		}
-		if (key == KeyEvent.VK_DOWN) {
+		if (key == KeyEvent.VK_DOWN)
 			player.down = true;
-		}
-		if (key == KeyEvent.VK_RIGHT) {
+		if (key == KeyEvent.VK_RIGHT)
 			player.right = true;
-		}
-		if (key == KeyEvent.VK_LEFT) {
+		if (key == KeyEvent.VK_LEFT)
 			player.left = true;
-		}
-		if (key == KeyEvent.VK_SPACE) {
+
+		if (key == KeyEvent.VK_SPACE)
 			player.space = true;
-		}
+
+		if (key == KeyEvent.VK_1)
+			player.w = weapon.gun;
+		if (key == KeyEvent.VK_2)
+			player.w = weapon.sword;
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -41,6 +44,7 @@ public class KeyInput extends KeyAdapter {
 			player.right = false;
 		if (key == KeyEvent.VK_LEFT)
 			player.left = false;
+
 		if (key == KeyEvent.VK_SPACE)
 			player.space = false;
 	}
