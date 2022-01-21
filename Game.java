@@ -5,9 +5,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,7 +23,7 @@ public class Game extends Canvas implements Runnable {
 	 * 
 	 */
 	Player p;
-	Enemy e;
+	ArrayList<Enemy> enemies;
 	Background bg;
 	ArrayList<Solid> solids = new ArrayList<Solid>();
 	LinkedList<Bullet> bullets = new LinkedList<Bullet>();
@@ -33,8 +35,9 @@ public class Game extends Canvas implements Runnable {
 	private boolean running = false;
 
 	public Game() {
-		p = new Player(359, 1568, 11, 11, this);
-		e = new Enemy(300, 300, 11, 11, this);
+		p = new Player(357, 1565, 16, 20, this);
+		enemies = new ArrayList<Enemy>();
+		enemies.add(new Enemy(300, 1000, 11, 11, this));
 		try {
 			bg = new Background(ImageIO.read(getClass().getResource("/game/backgrounds/Tutorial.png")));
 		} catch (IOException e1) {
@@ -171,15 +174,14 @@ public class Game extends Canvas implements Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.BLACK);
 		g2d.fill(borders);
-		if (bg != null && !p.space)
-			bg.render(g2d);
+		bg.render(g2d);
 		p.render(g2d);
-		e.render(g2d);
+		for (Enemy e : enemies)
+			e.render(g2d);
 		for (Bullet b : bullets)
 			b.render(g2d);
-		if (p.space)
-			for (Solid s : solids)
-				s.render(g2d);
+//		for (Solid s : solids)
+//			s.render(g2d);
 		g2d.dispose();
 
 		bs.show();
@@ -195,7 +197,7 @@ public class Game extends Canvas implements Runnable {
 		Iterator<Bullet> it = bullets.iterator();
 		while (it.hasNext()) {
 			Bullet b = it.next();
-			if (b.hitbox.intersects(p.hitbox)) {
+			if (b.shooter != p && b.hitbox.intersects(p.hitbox)) {
 				it.remove();
 				p.damage(1);
 				System.out.println(p.health);
@@ -223,11 +225,21 @@ public class Game extends Canvas implements Runnable {
 
 		bg.scroll(movex, movey);
 		p.scroll(movex, movey);
-		e.scroll(movex, movey);
+		for (Enemy e : enemies)
+			e.scroll(movex, movey);
 		for (Bullet b : bullets)
 			b.scroll(movex, movey);
 		for (Solid s : solids)
 			s.scroll(movex, movey);
+	}
+
+	public static Image[][] generateSprites(Image[][] s, BufferedImage spriteSheet, int w, int h) {
+		for (int i = 0; i < s.length; i++) {
+			for (int j = 0; j < s[i].length; j++) {
+				s[i][j] = spriteSheet.getSubimage(i * w, j * h, w, h);
+			}
+		}
+		return s;
 	}
 
 	public static void main(String args[]) {
