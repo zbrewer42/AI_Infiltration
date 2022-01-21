@@ -6,20 +6,20 @@ import java.awt.geom.Rectangle2D;
 
 public class Bullet extends Weapon {
 	float xv, yv;
-	float speed = 5;
+	float speed = 1;
+	Character shooter;
 
-	public Bullet(int x, int y, float xv, float yv, double a) {
+	public Bullet(int x, int y, double angle) {
 		super(x, y, 5, 5);
-		this.yv = yv * speed;
-		this.xv = xv * speed;
-		angle = a;
+		yv = (float) (speed * Math.sin(angle));
+		xv = (float) (speed * Math.cos(angle));
 	}
 
-	public Bullet(int x, int y, float xv, float yv) {
-		super(x, y, 10, 10);
-		this.yv = yv * speed;
-		this.xv = xv * speed;
-		angle = 0;
+	public Bullet(Character s, int x, int y, double angle) {
+		super(x, y, 5, 5);
+		yv = (float) (speed * Math.sin(angle));
+		xv = (float) (speed * Math.cos(angle));
+		shooter = s;
 	}
 
 	public void reset(int x, int y) {
@@ -35,10 +35,5 @@ public class Bullet extends Weapon {
 	public void tick() {
 		hitbox = new Rectangle2D.Float((float) hitbox.getX() + xv, (float) hitbox.getY() + yv,
 				(float) hitbox.getWidth(), (float) hitbox.getHeight());
-	}
-
-	public boolean touches(Player p) {
-		p.health -= 10;
-		return hitbox.intersects(p.hitbox);
 	}
 }
