@@ -25,9 +25,10 @@ public class Game extends Canvas implements Runnable {
 	Player p;
 	ArrayList<Enemy> enemies;
 	Background bg;
+	Door d;
 	ArrayList<Solid> solids = new ArrayList<Solid>();
 	LinkedList<Bullet> bullets = new LinkedList<Bullet>();
-
+	int cooldown = 500;
 	private static final long serialVersionUID = 1L;
 	// resolution goal is 240x160, temp is 720x480
 	static final Rectangle2D borders = new Rectangle2D.Float(0, 0, 720, 480);
@@ -36,6 +37,7 @@ public class Game extends Canvas implements Runnable {
 
 	public Game() {
 		p = new Player(357, 1565, 16, 20, this);
+		d = new Door(200, 100, 100, 100, this);
 		enemies = new ArrayList<Enemy>();
 		enemies.add(new Enemy(300, 1000, 11, 11, this));
 		try {
@@ -176,12 +178,14 @@ public class Game extends Canvas implements Runnable {
 		g2d.fill(borders);
 		bg.render(g2d);
 		p.render(g2d);
+		d.render(g2d);
 		for (Enemy e : enemies)
 			e.render(g2d);
 		for (Bullet b : bullets)
 			b.render(g2d);
 //		for (Solid s : solids)
 //			s.render(g2d);
+		
 		g2d.dispose();
 
 		bs.show();
@@ -222,7 +226,11 @@ public class Game extends Canvas implements Runnable {
 		} else if (p.hitbox.getCenterX() > rightBorder) {
 			movex = (float) (rightBorder - p.hitbox.getX());
 		}
-
+			scrollAll(movex, movey);
+		
+	}
+	
+	public void scrollAll(float movex, float movey) {
 		bg.scroll(movex, movey);
 		p.scroll(movex, movey);
 		for (Enemy e : enemies)
@@ -232,7 +240,13 @@ public class Game extends Canvas implements Runnable {
 		for (Solid s : solids)
 			s.scroll(movex, movey);
 	}
-
+	public void spawnE() {
+		if(cooldown == 0) {
+			enemies.add(new Enemy(100, 100, 11, 11, this));
+			cooldown = 200;
+		}
+		else cooldown--;
+	}
 	public static Image[][] generateSprites(Image[][] s, BufferedImage spriteSheet, int w, int h) {
 		for (int i = 0; i < s.length; i++) {
 			for (int j = 0; j < s[i].length; j++) {
