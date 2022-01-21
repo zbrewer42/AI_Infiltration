@@ -2,16 +2,17 @@ package game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Line2D;
+import java.awt.Image;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.LinkedList;
+
+import javax.imageio.ImageIO;
 
 public class Enemy extends Character {
 	int type;
 	boolean alive;
 	LinkedList<Bullet> bList;
-	Bullet bull;
-	int d = 0;
 	float xv, yv;
 
 	public Enemy(int x, int y, int w, int h, Game g) {
@@ -20,8 +21,14 @@ public class Enemy extends Character {
 		alive = true;
 		bList = new LinkedList<Bullet>();
 		cooldown = 0;
-		bull = new Bullet(x, y, 0, 0);
 		xv = yv = 0;
+		sprites = new Image[32][5];
+		try {
+			sprites = Game.generateSprites(sprites, ImageIO.read(getClass().getResource("/game/spriteSheets/Test.png")),
+					16, 20);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Enemy(int x, int y, int w, int h, int t, Game g) {
@@ -29,20 +36,26 @@ public class Enemy extends Character {
 		type = t;
 		alive = true;
 		xv = yv = 0;
+		try {
+			sprites = Game.generateSprites(sprites, ImageIO.read(getClass().getResource("/game/spriteSheets/Test.png")),
+					16, 20);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void render(Graphics2D g) {
 		if (alive) {
+			g.drawImage(sprites[d.dir][a.val], (int) hitbox.getX(), (int) hitbox.getY(), (int) hitbox.getX() + W,
+					(int) hitbox.getY() + H, 0, 0, 16, 20, null);
 			g.setColor(Color.BLUE);
-			g.fill(hitbox);
+			g.draw(hitbox);
+
 			for (Bullet b : bList) {
 				b.render(g);
 			}
 			if (hitbox.intersects(Game.borders))
 				tick();
-
-			g.draw(new Line2D.Double(hitbox.getCenterX(), hitbox.getCenterY(), hitbox.getCenterX() + xv * 20,
-					hitbox.getCenterY() + yv * 20));
 		}
 		damage();
 
@@ -73,11 +86,8 @@ public class Enemy extends Character {
 	}
 
 	public void attack() {
-		if (cooldown == 0) {
-			game.bullets.add(new Bullet((int) hitbox.getCenterX(), (int) hitbox.getCenterY(), xv, yv, angle));
-			cooldown = 250;
-		} else
-			cooldown--;
+		shoot(250);
+		cooldown--;
 	}
 
 	public void trigMove() {
@@ -86,18 +96,11 @@ public class Enemy extends Character {
 		super.trigMove(xv, yv);
 	}
 
-//	public int findX(Player p) {
-//		return x - p.x;
-//	}
-
-//	public int findY(Player p) {
-//		return y - p.y;
-//	}
-
 	public void tick() {
 		aimAt(game.p);
 		trigMove();
 		attack();
+		getDirection();
 	}
 
 	public void scroll(float mx, float my) {
