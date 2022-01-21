@@ -15,5 +15,4 @@ public class Background extends GameObject {
 	public void render(Graphics2D g) {
 		g.drawImage(image, (int) hitbox.getX(), (int) hitbox.getY(), image.getWidth(null), image.getHeight(null), null);
 	}
-
 }

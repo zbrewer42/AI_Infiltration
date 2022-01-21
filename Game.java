@@ -25,10 +25,11 @@ public class Game extends Canvas implements Runnable {
 	Player p;
 	ArrayList<Enemy> enemies;
 	Background bg;
-	Door d;
 	ArrayList<Solid> solids = new ArrayList<Solid>();
 	LinkedList<Bullet> bullets = new LinkedList<Bullet>();
-	int cooldown = 500;
+
+	int cooldown = 2000;
+
 	private static final long serialVersionUID = 1L;
 	// resolution goal is 240x160, temp is 720x480
 	static final Rectangle2D borders = new Rectangle2D.Float(0, 0, 720, 480);
@@ -37,11 +38,11 @@ public class Game extends Canvas implements Runnable {
 
 	public Game() {
 		p = new Player(357, 1565, 16, 20, this);
-		d = new Door(200, 100, 100, 100, this);
 		enemies = new ArrayList<Enemy>();
-		enemies.add(new Enemy(300, 1000, 11, 11, this));
+		enemies.add(new Enemy(300, 900, 16, 20, this));
 		try {
-			bg = new Background(ImageIO.read(getClass().getResource("/game/backgrounds/Tutorial.png")));
+			// main.class.getResou
+			bg = new Background(ImageIO.read(getClass().getResourceAsStream("textures\\Tutorial.png")));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -178,14 +179,12 @@ public class Game extends Canvas implements Runnable {
 		g2d.fill(borders);
 		bg.render(g2d);
 		p.render(g2d);
-		d.render(g2d);
 		for (Enemy e : enemies)
 			e.render(g2d);
 		for (Bullet b : bullets)
 			b.render(g2d);
 //		for (Solid s : solids)
 //			s.render(g2d);
-		
 		g2d.dispose();
 
 		bs.show();
@@ -198,15 +197,26 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void tick() {
-		Iterator<Bullet> it = bullets.iterator();
-		while (it.hasNext()) {
-			Bullet b = it.next();
+		Iterator<Bullet> bi = bullets.iterator();
+		while (bi.hasNext()) {
+			Bullet b = bi.next();
 			if (b.shooter != p && b.hitbox.intersects(p.hitbox)) {
-				it.remove();
+				bi.remove();
 				p.damage(1);
 				System.out.println(p.health);
 			} else if (!b.hitbox.intersects(borders) || b.collide(solids).size() > 0) {
-				it.remove();
+				bi.remove();
+			}
+		}
+
+		Iterator<Enemy> ei = enemies.iterator();
+		while (ei.hasNext()) {
+			Enemy e = ei.next();
+			for (Bullet B : bullets)
+				if (!B.shooter.getClass().equals(e.getClass()) && e.hitbox.intersects(B.hitbox))
+					e.alive = false;
+			if (e.alive == false) {
+				ei.remove();
 			}
 		}
 
@@ -226,11 +236,7 @@ public class Game extends Canvas implements Runnable {
 		} else if (p.hitbox.getCenterX() > rightBorder) {
 			movex = (float) (rightBorder - p.hitbox.getX());
 		}
-			scrollAll(movex, movey);
-		
-	}
-	
-	public void scrollAll(float movex, float movey) {
+
 		bg.scroll(movex, movey);
 		p.scroll(movex, movey);
 		for (Enemy e : enemies)
@@ -239,14 +245,14 @@ public class Game extends Canvas implements Runnable {
 			b.scroll(movex, movey);
 		for (Solid s : solids)
 			s.scroll(movex, movey);
+
+		if (cooldown == 0) {
+			enemies.add(new Enemy((int) (bg.hitbox.getX() + 300), (int) (bg.hitbox.getY() + 240), 16, 20, this));
+			cooldown = 2000;
+		} else
+			cooldown--;
 	}
-	public void spawnE() {
-		if(cooldown == 0) {
-			enemies.add(new Enemy(100, 100, 11, 11, this));
-			cooldown = 200;
-		}
-		else cooldown--;
-	}
+
 	public static Image[][] generateSprites(Image[][] s, BufferedImage spriteSheet, int w, int h) {
 		for (int i = 0; i < s.length; i++) {
 			for (int j = 0; j < s[i].length; j++) {
