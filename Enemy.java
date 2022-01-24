@@ -24,8 +24,8 @@ public class Enemy extends Character {
 		xv = yv = 0;
 		sprites = new Image[32][5];
 		try {
-			sprites = Game.generateSprites(sprites, ImageIO.read(getClass().getResource("/game/spriteSheets/Test.png")),
-					16, 20);
+			sprites = Game.generateSprites(sprites,
+					ImageIO.read(getClass().getResourceAsStream("/game/spriteSheets/test.png")), 16, 20);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

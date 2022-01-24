@@ -14,6 +14,7 @@ class Player extends Character {
 
 	boolean up, down, left, right, space;
 	int inv;
+	Sword s;
 
 	public Player(int x, int y, int w, int h, Game g) {
 		super(x, y, w, h, g);
@@ -21,16 +22,19 @@ class Player extends Character {
 		angle = 0;
 		vx = vy = 0;
 
+		s = new Sword(x, y, 16, w, this);
 		melee = new Line2D.Double(hitbox.getCenterX(), hitbox.getCenterY(), hitbox.getCenterX(), hitbox.getCenterY());
 		health = 50;
 		inv = 0;
 		sprites = new Image[32][5];
+
 		try {
-			sprites = Game.generateSprites(sprites, ImageIO.read(getClass().getResource("/game/spriteSheets/Test.png")),
-					16, 20);
+			sprites = Game.generateSprites(sprites,
+					ImageIO.read(getClass().getResourceAsStream("/game/spriteSheets/test.png")), 16, 20);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public void render(Graphics2D g) {
@@ -38,8 +42,11 @@ class Player extends Character {
 		g.drawImage(sprites[d.dir][a.val], (int) hitbox.getX(), (int) hitbox.getY(), (int) hitbox.getX() + W,
 				(int) hitbox.getY() + H, 0, 0, 16, 20, null);
 		g.draw(hitbox);
-		if (a == action.melee)
+		if (a == action.melee) {
+			s.render(g);
+			g.setColor(Color.white);
 			g.draw(melee);
+		}
 		getDirection();
 		tick();
 	}
