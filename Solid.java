@@ -9,8 +9,28 @@ import java.util.ArrayList;
 
 public class Solid extends Polygon {
 	ArrayList<Line2D.Double> lines;
+	Polygon polygon = null;
 
 	public Solid(ArrayList<Point2D> points) {
+		lines = new ArrayList<Line2D.Double>();
+		for (int i = 0; i < points.size(); i++) {
+			if (i + 1 < points.size()) {
+				lines.add(new Line2D.Double(points.get(i), points.get(i + 1)));
+			} else {
+				lines.add(new Line2D.Double(points.get(i), points.get(0)));
+			}
+		}
+	}
+
+	public Solid(ArrayList<Point2D> points, boolean isPolygon) {
+		if (isPolygon) {
+			int[] xPoints = new int[points.size()], yPoints = new int[points.size()];
+			for (int i = 0; i < points.size(); i++) {
+				xPoints[i] = (int) points.get(i).getX();
+				yPoints[i] = (int) points.get(i).getY();
+			}
+			polygon = new Polygon(xPoints, yPoints, xPoints.length);
+		}
 		lines = new ArrayList<Line2D.Double>();
 		for (int i = 0; i < points.size(); i++) {
 			if (i + 1 < points.size()) {
@@ -25,6 +45,9 @@ public class Solid extends Polygon {
 		for (Line2D l : lines) {
 			l.setLine(l.getX1() + mx, l.getY1() + my, l.getX2() + mx, l.getY2() + my);
 		}
+		if (polygon != null)
+			polygon.translate((int) (lines.get(0).getX1() - polygon.xpoints[0]),
+					(int) (lines.get(0).getY1() - polygon.ypoints[0]));
 	}
 
 	static Point2D normal(Line2D line) {
@@ -38,5 +61,7 @@ public class Solid extends Polygon {
 		for (Line2D.Double l : lines) {
 			g.draw(l);
 		}
+		if (polygon != null)
+			g.fill(polygon);
 	}
 }

@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
+import game.Character.action;
+
 public class Sword extends Weapon {
 	int cooldown;
 	Player player;
@@ -25,7 +27,7 @@ public class Sword extends Weapon {
 
 	public void render(Graphics2D g) {
 		g.setColor(Color.RED);
-		if (player.space && player.cooldown > 30) {
+		if (player.a == action.melee && player.cooldown > 1) {
 			switch (player.d) {
 			case down:
 				hitbox = new Rectangle2D.Double(player.hitbox.getCenterX() - width / 2, player.hitbox.getMaxY(), width,
