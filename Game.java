@@ -28,6 +28,7 @@ public class Game extends Canvas implements Runnable {
 	Background bg;
 	ArrayList<Solid> solids = new ArrayList<Solid>();
 	LinkedList<Bullet> bullets = new LinkedList<Bullet>();
+	int[][] walkable = new int[0][0];
 
 	int cooldown = 2000;
 
@@ -115,7 +116,7 @@ public class Game extends Canvas implements Runnable {
 		tempPoints.add(new Point2D.Double(440, 959));
 		tempPoints.add(new Point2D.Double(440, 1120));
 		tempPoints.add(new Point2D.Double(279, 1120));
-		solids.add(new Solid(tempPoints));
+		solids.add(new Solid(tempPoints, true));
 
 		tempPoints = new ArrayList<Point2D>();
 		tempPoints.add(new Point2D.Double(359, 269));
@@ -126,7 +127,17 @@ public class Game extends Canvas implements Runnable {
 		tempPoints.add(new Point2D.Double(359, 690));
 		tempPoints.add(new Point2D.Double(168, 499));
 		tempPoints.add(new Point2D.Double(168, 460));
-		solids.add(new Solid(tempPoints));
+		solids.add(new Solid(tempPoints, true));
+
+		walkable = new int[(int) bg.hitbox.getWidth() / 20][(int) bg.hitbox.getHeight() / 20];
+		for (int row = 0; row < walkable.length; row++) {
+			for (int col = 0; col < walkable[row].length; col++) {
+				GameObject temp = new GameObject(20, 20, row * 20, col * 20);
+				if (temp.collide(solids).size() == 0) {
+					walkable[row][col] = 1;
+				}
+			}
+		}
 
 		thread = new Thread(this);
 		thread.start();

@@ -5,12 +5,14 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
 public class Enemy extends Character {
 	int type;
 	boolean alive;
+	int[][] pathfinding;
 
 	public Enemy(int x, int y, int w, int h, Game g) {
 		super(x, y, w, h, g);
@@ -25,6 +27,7 @@ public class Enemy extends Character {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		pathfinding = Arrays.copyOf(g.walkable, g.walkable.length);
 	}
 
 	public Enemy(int x, int y, int w, int h, int t, Game g) {
@@ -87,6 +90,10 @@ public class Enemy extends Character {
 		vy = 0.25 * Math.sin(angle);
 		vx = 0.25 * Math.cos(angle);
 		super.trigMove(vx, vy);
+	}
+
+	public void findPath() {
+
 	}
 
 	public void tick() {
