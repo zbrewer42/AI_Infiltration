@@ -41,7 +41,7 @@ class Player extends Character {
 		g.setColor(new Color(255, 255, 255));
 		g.drawImage(sprites[d.dir][a.val], (int) hitbox.getX(), (int) hitbox.getY(), (int) hitbox.getX() + W,
 				(int) hitbox.getY() + H, 0, 0, 16, 20, null);
-		g.draw(hitbox);
+		// g.draw(hitbox);
 		if (a == action.melee) {
 			s.render(g);
 			g.setColor(Color.white);
@@ -69,9 +69,9 @@ class Player extends Character {
 			vx = 0;
 
 		if (vx != 0)
-			vy = (float) (vy / Math.sqrt(2));
+			vy = vy / Math.sqrt(2);
 		if (vy != 0)
-			vx = (float) (vx / Math.sqrt(2));
+			vx = vx / Math.sqrt(2);
 
 		trigMove();
 
@@ -82,14 +82,14 @@ class Player extends Character {
 	public void action() {
 		if (space)
 			if (w == weapon.gun)
-				shoot(50);
+				shoot(20);
 			else if (w == weapon.sword)
-				melee(45);
+				melee(10);
 
 		if (cooldown > 0) {
 			cooldown--;
 			if (a == action.melee) {
-				double newAngle = angle + Math.toRadians(45) - Math.toRadians(cooldown * 2);
+				double newAngle = angle + Math.toRadians(45) - Math.toRadians(cooldown * 9);
 				melee = new Line2D.Double(hitbox.getCenterX(), hitbox.getCenterY(),
 						hitbox.getCenterX() + 20 * Math.cos(newAngle), hitbox.getCenterY() + 20 * Math.sin(newAngle));
 			}

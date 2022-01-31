@@ -5,20 +5,20 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 public class Bullet extends Weapon {
-	float xv, yv;
-	float speed = 1;
+	double xv, yv;
+	double speed = 5;
 	Character shooter;
 
 	public Bullet(int x, int y, double angle) {
 		super(x, y, 5, 5);
-		yv = (float) (speed * Math.sin(angle));
-		xv = (float) (speed * Math.cos(angle));
+		yv = speed * Math.sin(angle);
+		xv = speed * Math.cos(angle);
 	}
 
 	public Bullet(Character s, int x, int y, double angle) {
 		super(x, y, 5, 5);
-		yv = (float) (speed * Math.sin(angle));
-		xv = (float) (speed * Math.cos(angle));
+		yv = speed * Math.sin(angle);
+		xv = speed * Math.cos(angle);
 		shooter = s;
 	}
 
@@ -33,7 +33,6 @@ public class Bullet extends Weapon {
 	}
 
 	public void tick() {
-		hitbox = new Rectangle2D.Float((float) hitbox.getX() + xv, (float) hitbox.getY() + yv,
-				(float) hitbox.getWidth(), (float) hitbox.getHeight());
+		hitbox = new Rectangle2D.Double(hitbox.getX() + xv, hitbox.getY() + yv, hitbox.getWidth(), hitbox.getHeight());
 	}
 }

@@ -35,9 +35,9 @@ public class Character extends GameObject {
 		}
 	}
 
-	float vx, vy;
+	double vx, vy;
 	int W, H;
-	float speed = 0.5f;
+	double speed = 2;
 	int health;
 	int cooldown;
 	action a;
@@ -92,7 +92,7 @@ public class Character extends GameObject {
 		}
 	}
 
-	public void trigMove(float mx, float my) {
+	public void trigMove(double mx, double my) {
 		vx = mx;
 		vy = my;
 		// x direction

@@ -7,12 +7,12 @@ import java.util.LinkedList;
 
 public class GameObject {
 	Rectangle2D hitbox;
-	float velocity;
+	// double velocity;
 	double angle = 0; // angles are in radians
 	LinkedList<Line2D> touching;
 
 	public GameObject(int x, int y, int w, int h) {
-		hitbox = new Rectangle2D.Float(x, y, w, h);
+		hitbox = new Rectangle2D.Double(x, y, w, h);
 		touching = new LinkedList<Line2D>();
 	}
 
@@ -31,7 +31,7 @@ public class GameObject {
 
 	}
 
-	public void scroll(float mx, float my) {
+	public void scroll(double mx, double my) {
 		hitbox.setRect(hitbox.getMinX() + mx, hitbox.getMinY() + my, hitbox.getWidth(), hitbox.getHeight());
 	}
 

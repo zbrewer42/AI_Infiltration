@@ -32,6 +32,9 @@ public class KeyInput extends KeyAdapter {
 			player.w = weapon.gun;
 		if (key == KeyEvent.VK_2)
 			player.w = weapon.sword;
+		if (key == KeyEvent.VK_ESCAPE) {
+			System.exit(0);
+		}
 	}
 
 	public void keyReleased(KeyEvent e) {

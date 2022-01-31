@@ -5,23 +5,19 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
 public class Enemy extends Character {
 	int type;
 	boolean alive;
-	LinkedList<Bullet> bList;
-	float xv, yv;
 
 	public Enemy(int x, int y, int w, int h, Game g) {
 		super(x, y, w, h, g);
 		type = 1;
 		alive = true;
-		bList = new LinkedList<Bullet>();
 		cooldown = 0;
-		xv = yv = 0;
+		vx = vy = 0;
 		sprites = new Image[32][5];
 		try {
 			sprites = Game.generateSprites(sprites,
@@ -35,7 +31,7 @@ public class Enemy extends Character {
 		super(x, y, w, h, g);
 		type = t;
 		alive = true;
-		xv = yv = 0;
+		vx = vy = 0;
 		try {
 			sprites = Game.generateSprites(sprites, ImageIO.read(getClass().getResource("/game/spriteSheets/Test.png")),
 					16, 20);
@@ -51,9 +47,6 @@ public class Enemy extends Character {
 			g.setColor(Color.BLUE);
 			g.draw(hitbox);
 
-			for (Bullet b : bList) {
-				b.render(g);
-			}
 			if (hitbox.intersects(Game.borders))
 				tick();
 		}
@@ -80,20 +73,20 @@ public class Enemy extends Character {
 			}
 		}
 		if (!alive) {
-			hitbox = new Rectangle2D.Float((float) hitbox.getWidth(), (float) hitbox.getHeight(), Integer.MAX_VALUE,
+			hitbox = new Rectangle2D.Double(hitbox.getWidth(), hitbox.getHeight(), Integer.MAX_VALUE,
 					Integer.MAX_VALUE);
 		}
 	}
 
 	public void attack() {
-		shoot(250);
+		shoot(30);
 		cooldown--;
 	}
 
 	public void trigMove() {
-		yv = (float) (0.25 * Math.sin(angle));
-		xv = (float) (0.25 * Math.cos(angle));
-		super.trigMove(xv, yv);
+		vy = 0.25 * Math.sin(angle);
+		vx = 0.25 * Math.cos(angle);
+		super.trigMove(vx, vy);
 	}
 
 	public void tick() {
@@ -101,12 +94,5 @@ public class Enemy extends Character {
 		trigMove();
 		attack();
 		getDirection();
-	}
-
-	public void scroll(float mx, float my) {
-		super.scroll(mx, my);
-		for (Bullet b : bList)
-			b.hitbox.setRect(b.hitbox.getMinX() + mx, b.hitbox.getMinY() + my, b.hitbox.getWidth(),
-					b.hitbox.getHeight());
 	}
 }

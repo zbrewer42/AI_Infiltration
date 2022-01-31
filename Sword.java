@@ -60,42 +60,12 @@ public class Sword extends Weapon {
 				hitbox = new Rectangle2D.Double(player.hitbox.getCenterX(), player.hitbox.getCenterY(), 0, 0);
 				break;
 			}
-
-//			if (player.up)
-//
-//				if (player.down)
-//					hitbox = (new Rectangle2D.Double(player.hitbox.getX(), player.hitbox.getY() + 11, 11, 15));
-//			if (player.right)
-//				hitbox = (new Rectangle2D.Double(player.hitbox.getX() + 11, player.hitbox.getY(), 15, 11));
-//			if (player.left)
-//				hitbox = (new Rectangle2D.Double(player.hitbox.getX() - 15, player.hitbox.getY(), 15, 11));
-//			if (player.up && player.left) {
-//				hitbox.setFrameFromDiagonal(player.hitbox.getX(), player.hitbox.getY(), player.hitbox.getX() - 12,
-//						player.hitbox.getY() - 12);
-//			}
-//			if (player.up && player.right) {
-//				hitbox.setFrameFromDiagonal(player.hitbox.getX() + 11, player.hitbox.getY(), player.hitbox.getX() + 23,
-//						player.hitbox.getY() - 12);
-//			}
-//			if (player.down && player.left) {
-//				hitbox.setFrameFromDiagonal(player.hitbox.getX(), player.hitbox.getY() + 11, player.hitbox.getX() - 12,
-//						player.hitbox.getY() + 23);
-//			}
-//			if (player.down && player.right) {
-//				hitbox.setFrameFromDiagonal(player.hitbox.getX() + 11, player.hitbox.getY() + 11,
-//						player.hitbox.getX() + 23, player.hitbox.getY() + 23);
-//			}
-//
-//		} else
-//			hitbox = new Rectangle2D.Double(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 		} else {
 			hitbox = new Rectangle2D.Double(player.hitbox.getCenterX(), player.hitbox.getCenterY(), 0, 0);
 		}
 		g.fill(hitbox);
 
 		tick();
-
-		// System.out.println(x + " " + y + " " +w + " " + h);
 	}
 
 	public void tick() {
@@ -105,23 +75,4 @@ public class Sword extends Weapon {
 			}
 		}
 	}
-
-//	public void rotateH() {
-//	if (w < h) {
-//			int temp = w;
-//			w = h;
-//			h = temp;
-//		}
-//
-//	}
-//
-//	public void rotateV() {
-//		if (w > h) {
-//			int temp = w;
-//			w = h;
-//			h = temp;
-//		}
-//
-//	}
-//
 }
