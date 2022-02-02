@@ -37,7 +37,7 @@ public class Character extends GameObject {
 
 	double vx, vy;
 	int W, H;
-	double speed = 2;
+	double speed = 0.5;
 	int health;
 	int cooldown;
 	action a;
@@ -61,35 +61,7 @@ public class Character extends GameObject {
 	}
 
 	public void trigMove() {
-		// x direction
-		hitbox.setRect(hitbox.getMinX() + vx, hitbox.getMinY(), W, H);
-		collide(game.solids);
-		for (Line2D l : touching) {
-			Point2D normal = Solid.normal(l);
-
-			if (normal.getX() == 1) {
-				hitbox.setRect(hitbox.getMinX() - vx, hitbox.getMinY(), W, H);
-			} else if (normal.getY() == -1.0) {
-			} else {
-				hitbox.setRect(hitbox.getMinX() - (vx + (vx * normal.getX() + vy * normal.getY()) * normal.getX()),
-						hitbox.getMinY() - (vy + (vy * normal.getY() + vx * normal.getX()) * normal.getY()), W, H);
-			}
-		}
-		// y direction
-		hitbox.setRect(hitbox.getMinX(), hitbox.getMinY() + vy, W, H);
-		collide(game.solids);
-		for (Line2D l : touching) {
-			Point2D normal = Solid.normal(l);
-
-			if (normal.getY() == 1) {
-				hitbox.setRect(hitbox.getMinX(), hitbox.getMinY() - vy, W, H);
-			} else if (normal.getX() == 1.0) {
-				// do nothing
-			} else {
-				hitbox.setRect(hitbox.getMinX() - (vx + (vx * normal.getX() + vy * normal.getY()) * normal.getX()),
-						hitbox.getMinY() - (vy + (vy * normal.getY() + vx * normal.getX()) * normal.getY()), W, H);
-			}
-		}
+		trigMove(vx, vy);
 	}
 
 	public void trigMove(double mx, double my) {
@@ -101,9 +73,9 @@ public class Character extends GameObject {
 		for (Line2D l : touching) {
 			Point2D normal = Solid.normal(l);
 
-			if (normal.getX() == 1) {
+			if (normal.getX() == 1.0 || normal.getX() == -1.0) {
 				hitbox.setRect(hitbox.getMinX() - vx, hitbox.getMinY(), W, H);
-			} else if (normal.getY() == -1.0) {
+			} else if (normal.getY() == 1.0 || normal.getY() == -1.0) {
 			} else {
 				hitbox.setRect(hitbox.getMinX() - (vx + (vx * normal.getX() + vy * normal.getY()) * normal.getX()),
 						hitbox.getMinY() - (vy + (vy * normal.getY() + vx * normal.getX()) * normal.getY()), W, H);
@@ -115,9 +87,9 @@ public class Character extends GameObject {
 		for (Line2D l : touching) {
 			Point2D normal = Solid.normal(l);
 
-			if (normal.getY() == 1) {
+			if (normal.getY() == 1.0 || normal.getY() == -1.0) {
 				hitbox.setRect(hitbox.getMinX(), hitbox.getMinY() - vy, W, H);
-			} else if (normal.getX() == 1.0) {
+			} else if (normal.getX() == 1.0 || normal.getX() == -1.0) {
 				// do nothing
 			} else {
 				hitbox.setRect(hitbox.getMinX() - (vx + (vx * normal.getX() + vy * normal.getY()) * normal.getX()),
@@ -129,7 +101,8 @@ public class Character extends GameObject {
 	public void shoot(int c) {
 		if (cooldown == 0) {
 			a = action.shoot;
-			game.bullets.add(new Bullet(this, (int) hitbox.getCenterX(), (int) hitbox.getCenterY(), angle));
+			game.bullets
+					.add(new Bullet(this, (int) (hitbox.getCenterX() - 2.5), (int) (hitbox.getCenterY() - 2.5), angle));
 			cooldown = c;
 		}
 	}

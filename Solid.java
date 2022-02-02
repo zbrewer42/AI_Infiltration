@@ -41,18 +41,10 @@ public class Solid extends Polygon {
 		}
 	}
 
-	public void scroll(double mx, double my) {
-		for (Line2D l : lines) {
-			l.setLine(l.getX1() + mx, l.getY1() + my, l.getX2() + mx, l.getY2() + my);
-		}
-		if (polygon != null)
-			polygon.translate((int) (lines.get(0).getX1() - polygon.xpoints[0]),
-					(int) (lines.get(0).getY1() - polygon.ypoints[0]));
-	}
-
 	static Point2D normal(Line2D line) {
 		double angle = Math.atan2(line.getY2() - line.getY1(), line.getX2() - line.getX1());
-		Point2D normal = new Point2D.Double(Math.sin(angle), -Math.cos(angle));
+		Point2D normal = new Point2D.Double(Math.round(Math.sin(angle) * 1000) / 1000.0,
+				Math.round(-Math.cos(angle) * 1000) / 1000.0);
 		return normal;
 	}
 

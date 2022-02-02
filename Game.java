@@ -34,9 +34,11 @@ public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 	// static final Dimension resolution = new Dimension(240, 160);
-	static final Rectangle2D borders = new Rectangle2D.Float(0, 0, 240, 160);
+	final static Dimension resolution = new Dimension(240, 160);
 	Dimension currentSize = getSize();
+	Rectangle2D screen = new Rectangle2D.Double(0, 0, 240, 160);
 	double scaleX, scaleY;
+	static double scrollX, scrollY;
 	private Thread thread;
 	boolean running = false;
 
@@ -51,16 +53,8 @@ public class Game extends Canvas implements Runnable {
 		}
 
 		scaleX = scaleY = 1;
-		new Window(getW(), getH(), "Game", this);
+		new Window((int) resolution.getWidth(), (int) resolution.getHeight(), "Game", this);
 		this.addKeyListener(new KeyInput(p));
-	}
-
-	public static int getW() {
-		return (int) borders.getMaxX();
-	}
-
-	public static int getH() {
-		return (int) borders.getMaxY();
 	}
 
 	public synchronized void start() {
@@ -197,22 +191,19 @@ public class Game extends Canvas implements Runnable {
 		// if ratio is greater than 1.5, it is too wide. if it is less than 1.5, it is
 		// too tall
 		if ((currentSize.width + 0.0) / currentSize.height > 1.5) {
-			scaleX = (currentSize.height * 1.5) / borders.getWidth();
-			scaleY = (currentSize.height + 0.0) / borders.getHeight();
-//			g2d.scale((currentSize.height * 1.5) / resolution.width, (currentSize.height + 0.0) / resolution.height);
+			scaleX = (currentSize.height * 1.5) / resolution.getWidth();
+			scaleY = (currentSize.height + 0.0) / resolution.getHeight();
 		} else if ((currentSize.width + 0.0) / currentSize.height < 1.5) {
-			scaleX = (currentSize.width + 0.0) / borders.getWidth();
-			scaleY = (currentSize.width / 1.5) / borders.getHeight();
-//			g2d.scale((currentSize.width + 0.0) / resolution.width, (currentSize.width / 1.5) / resolution.height);
+			scaleX = (currentSize.width + 0.0) / resolution.getWidth();
+			scaleY = (currentSize.width / 1.5) / resolution.getHeight();
 		} else {
-			scaleX = (currentSize.width + 0.0) / borders.getWidth();
-			scaleY = (currentSize.height + 0.0) / borders.getHeight();
-//			g2d.scale((currentSize.width + 0.0) / resolution.width, (currentSize.height + 0.0) / resolution.height);
+			scaleX = (currentSize.width + 0.0) / resolution.getWidth();
+			scaleY = (currentSize.height + 0.0) / resolution.getHeight();
 		}
 		g2d.scale(scaleX, scaleY);
 
 		g2d.setColor(Color.BLACK);
-		g2d.fill(borders);
+		g2d.fill(screen);
 		bg.render(g2d);
 		p.render(g2d);
 		for (Enemy e : enemies)
@@ -240,7 +231,7 @@ public class Game extends Canvas implements Runnable {
 				bi.remove();
 				p.damage(1);
 				System.out.println(p.health);
-			} else if (!b.hitbox.intersects(borders) || b.collide(solids).size() > 0) {
+			} else if (!b.onScreen() || b.collide(solids).size() > 0) {
 				bi.remove();
 			}
 		}
@@ -260,32 +251,8 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void scroll() {
-		// float topBorder = 240, bottomBorder = 240, leftBorder = 360, rightBorder =
-		// 360, movex = 0, movey = 0;
-
-		double hBorder = borders.getHeight() / 2, wBorder = borders.getWidth() / 2;
-
-		double movex = 0, movey = 0;
-		if (p.hitbox.getCenterY() < hBorder) {
-			movey = (float) (hBorder - p.hitbox.getCenterY());
-		} else if (p.hitbox.getCenterY() > hBorder) {
-			movey = (float) (hBorder - p.hitbox.getCenterY());
-		}
-
-		if (p.hitbox.getCenterX() < wBorder) {
-			movex = (float) (wBorder - p.hitbox.getCenterX());
-		} else if (p.hitbox.getCenterX() > wBorder) {
-			movex = (float) (wBorder - p.hitbox.getCenterX());
-		}
-
-		bg.scroll(movex, movey);
-		p.scroll(movex, movey);
-		for (Enemy e : enemies)
-			e.scroll(movex, movey);
-		for (Bullet b : bullets)
-			b.scroll(movex, movey);
-		for (Solid s : solids)
-			s.scroll(movex, movey);
+		scrollX = resolution.getWidth() / 2 - (p.hitbox.getCenterX());
+		scrollY = resolution.getHeight() / 2 - (p.hitbox.getCenterY());
 
 		if (cooldown == 0) {
 			enemies.add(new Enemy((int) (bg.hitbox.getX() + 300), (int) (bg.hitbox.getY() + 240), 16, 20, this));

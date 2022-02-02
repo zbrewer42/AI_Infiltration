@@ -45,12 +45,13 @@ public class Enemy extends Character {
 
 	public void render(Graphics2D g) {
 		if (alive) {
-			g.drawImage(sprites[d.dir][a.val], (int) hitbox.getX(), (int) hitbox.getY(), (int) hitbox.getX() + W,
-					(int) hitbox.getY() + H, 0, 0, 16, 20, null);
+			g.drawImage(sprites[d.dir][a.val], (int) (hitbox.getX() + Game.scrollX),
+					(int) (hitbox.getY() + Game.scrollY), W, H, null);
 			g.setColor(Color.BLUE);
-			g.draw(hitbox);
+			// g.draw(hitbox);
 
-			if (hitbox.intersects(Game.borders))
+			// if (hitbox.intersects(game.screen))
+			if (onScreen())
 				tick();
 		}
 		damage();
@@ -87,8 +88,8 @@ public class Enemy extends Character {
 	}
 
 	public void trigMove() {
-		vy = 0.25 * Math.sin(angle);
-		vx = 0.25 * Math.cos(angle);
+		vy = Math.sin(angle);
+		vx = Math.cos(angle);
 		super.trigMove(vx, vy);
 	}
 

@@ -39,9 +39,9 @@ class Player extends Character {
 
 	public void render(Graphics2D g) {
 		g.setColor(new Color(255, 255, 255));
-		g.drawImage(sprites[d.dir][a.val], (int) hitbox.getX(), (int) hitbox.getY(), (int) hitbox.getX() + W,
-				(int) hitbox.getY() + H, 0, 0, 16, 20, null);
-		// g.draw(hitbox);
+		g.drawImage(sprites[d.dir][a.val], (int) (hitbox.getX() + Game.scrollX), (int) (hitbox.getY() + Game.scrollY),
+				16, 20, null);
+
 		if (a == action.melee) {
 			s.render(g);
 			g.setColor(Color.white);
@@ -73,7 +73,8 @@ class Player extends Character {
 		if (vy != 0)
 			vx = vx / Math.sqrt(2);
 
-		trigMove();
+		for (int i = 0; i < 4; i++)
+			trigMove(vx, vy);
 
 		if (!(vy == vx && vy == 0))
 			angle = Math.atan2(vy, vx);
@@ -90,8 +91,9 @@ class Player extends Character {
 			cooldown--;
 			if (a == action.melee) {
 				double newAngle = angle + Math.toRadians(45) - Math.toRadians(cooldown * 9);
-				melee = new Line2D.Double(hitbox.getCenterX(), hitbox.getCenterY(),
-						hitbox.getCenterX() + 20 * Math.cos(newAngle), hitbox.getCenterY() + 20 * Math.sin(newAngle));
+				melee = new Line2D.Double(hitbox.getCenterX() + Game.scrollX, hitbox.getCenterY() + Game.scrollY,
+						hitbox.getCenterX() + Game.scrollX + 20 * Math.cos(newAngle),
+						hitbox.getCenterY() + Game.scrollY + 20 * Math.sin(newAngle));
 			}
 		} else {
 			a = action.none;
