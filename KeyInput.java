@@ -27,7 +27,7 @@ public class KeyInput extends KeyAdapter {
 
 		if (key == KeyEvent.VK_SPACE)
 			player.space = true;
-
+ 
 		if (key == KeyEvent.VK_1)
 			player.w = weapon.gun;
 		if (key == KeyEvent.VK_2)
